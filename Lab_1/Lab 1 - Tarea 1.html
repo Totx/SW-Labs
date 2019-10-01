@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Validación de la operación con JavaScript</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: rgb(252, 202, 0);
+            }
+            .headings{
+                text-align: center;
+                color: red;
+                font-size: 20px;
+                text-decoration: underline;
+            }
+            input {
+                width : 30%;
+                padding: 5px 20px;
+                margin: 8px 0;
+                -webkit-transition: width 0.4s ease-in-out;
+                transition: width 0.4s ease-in-out;
+            }
+            span {
+                color : red;
+                font-size : 16px;
+            }
+        </style>
+         
+    </head>
+    <body>
+    
+        <h1 class="headings">Introduce los números en las casillas y especifica la operación que se quiere realizar</h1>
+        
+        <br>
+        <label for="left_val">Operando de la parte izquierda:</label>
+        <input type="text" name="left-operand" id="left_val" placeholder="Inserta el valor numérico" onKeyUp="checkOperation()"/><span id="lv">Empty</span>
+        <br>
+        <br>
+        <label for="operation">
+        Operación:</label>
+        <select name="operation" id="operationSelect" onchange="oper()">
+            <option value="sum">+</option>
+            <option value="res">-</option>
+            <option value="mul" selected>*</option>
+            <option value="div">/</option>
+        </select>
+        <span id="op">Dot selected</span>
+        <br>
+        <br>
+        <label for="right_val">
+        Operando de la parte derecha: </label>
+        <input type="text" name="right-operand" id="right_val" placeholder="Inserta el valor numérico" onKeyUp="checkOperation()"/><span id="rv">Empty</span>
+        <br>
+        <br>
+        <label for="result"><strong>Resultado:</strong></label>
+        <input type="text" name="result" id="result" placeholder="Inserta el valor del resultado" onKeyUp="checkOperation()"/><span id="re">Empty</span>
+        <br>
+        <button type="button" id="reset" name="resetZero" onclick="resetInput()">Vaciar huecos</button>
+        <br>
+        ¿Es correcto?
+        <span id="correction" style="color:red"></span>
+        
+       <script>
+       
+       var math_operation = {
+           "+" : function (a, b, c) { return (parseFloat(a) + parseFloat(b)) == parseFloat(c); },
+           "-" : function (a, b, c) { return (parseFloat(a) - parseFloat(b)) == parseFloat(c); },
+           "*" : function (a, b, c) { return (parseFloat(a) * parseFloat(b)) == parseFloat(c); },
+           "/" : function (a, b, c) { return (parseFloat(a) / parseFloat(b)) == parseFloat(c); }
+       };
+       
+            function checkNum(id, text){
+               var r = document.getElementById(id).value;
+               if (!r){
+                   document.getElementById(text).innerHTML = "Empty";
+                   return false;
+               }
+               if (isNaN(r)){
+                   document.getElementById(text).innerHTML = "Not a number";
+                   return false;
+               }
+               document.getElementById(text).innerHTML = "";
+               return true
+           }
+           
+           function checkOperation(){
+               var c = document.getElementById("correction");
+               var firstCheck = checkNum("left_val", "lv");
+               var secondCheck = checkNum("right_val", "rv");
+               var thirdCheck = checkNum("result", "re");
+               if(firstCheck && secondCheck && thirdCheck){
+                   var i = document.getElementById("left_val").value;
+                   var d = document.getElementById("right_val").value;
+                   var r = document.getElementById("result").value;
+                   var s = document.getElementById("operationSelect").value;
+                   if ((s=="sum" && math_operation['+'](i, d, r)) || (s=="res" && math_operation['-'](i, d, r)) || (s=="mul" && math_operation['*'](i, d, r)) || (s=="div" && math_operation['/'](i, d, r))){
+                    c.setAttribute("style", "color:green");
+                    c.innerHTML = "Sí";
+                    return true;
+                   }
+               } else {
+                   c.innerHTML = "";
+                   return false;
+               }
+                c.setAttribute("style", "color:red");
+                c.innerHTML = "No";
+                return false; 
+           }
+           
+           function oper(){
+               var s = document.getElementById("operationSelect").value;
+               var t = document.getElementById("correction");
+               if (s=="sum"){
+                   document.getElementById("op").innerHTML = "Sum selected";
+               } else if (s=="res"){
+                   document.getElementById("op").innerHTML = "Substract selected";
+               } else if (s=="mul"){
+                   document.getElementById("op").innerHTML = "Dot selected";
+               } else {
+                   document.getElementById("op").innerHTML = "Division selected";
+               }
+               return checkOperation();
+           }
+           
+           function resetInput(){
+               document.getElementById("left_val").value = "";
+               document.getElementById("right_val").value = "";
+               document.getElementById("result").value = "";
+               checkOperation();
+           }
+           
+        </script>
+    </body>
+</html>

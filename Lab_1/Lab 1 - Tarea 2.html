@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Validación de la operación con JQuery</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background: rgb(252, 202, 0);
+            }
+            .headings{
+                text-align: center;
+                color: red;
+                font-size: 20px;
+                text-decoration: underline;
+            }
+            input {
+                width : 30%;
+                padding: 5px 20px;
+                margin: 8px 0;
+                -webkit-transition: width 0.4s ease-in-out;
+                transition: width 0.4s ease-in-out;
+            }
+            span {
+                color : red;
+                font-size : 16px;
+            }
+        </style>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    </head>
+    <body>
+    
+        <h1 class="headings">Introduce los números en las casillas y especifica la operación que se quiere realizar</h1>
+        
+        <br>
+        <label for="left_val">Operando de la parte izquierda:</label>
+        <input type="text" name="left-operand" id="left_val" placeholder="Inserta el valor numérico"/><span id="lv">Empty</span>
+        <br>
+        <br>
+        <label for="operation">
+        Operación:</label>
+        <select name="operation" id="operationSelect">
+            <option value="sum">+</option>
+            <option value="res">-</option>
+            <option value="mul" selected>*</option>
+            <option value="div">/</option>
+        </select>
+        <span id="op">Dot selected</span>
+        <br>
+        <br>
+        <label for="right_val">
+        Operando de la parte derecha: </label>
+        <input type="text" name="right-operand" id="right_val" placeholder="Inserta el valor numérico"/><span id="rv">Empty</span>
+        <br>
+        <br>
+        <label for="result"><strong>Resultado:</strong></label>
+        <input type="text" name="result" id="result" placeholder="Inserta el valor del resultado"/><span id="re">Empty</span>
+        <br>
+        <button type="button" id="reset" name="resetZero">Vaciar huecos</button>
+        <br>
+        ¿Es correcto?
+        <span id="correction" style="color:red"></span>
+        
+        <script>
+        
+        var math_operation = {
+           "+" : function (a, b, c) { return (parseFloat(a) + parseFloat(b)) == parseFloat(c); },
+           "-" : function (a, b, c) { return (parseFloat(a) - parseFloat(b)) == parseFloat(c); },
+           "*" : function (a, b, c) { return (parseFloat(a) * parseFloat(b)) == parseFloat(c); },
+           "/" : function (a, b, c) { return (parseFloat(a) / parseFloat(b)) == parseFloat(c); }
+       };
+       
+       function checkNum(id, text){
+            var id_val = $("#".concat(id));
+            var text_id = $("#".concat(text));
+            var r = id_val.val();
+            if (!r){
+                text_id.html("Empty");
+                return false;
+            }
+            if (isNaN(r)){
+                text_id.html("Not a number");
+                return false;
+            }
+            text_id.html("");
+            return true;
+        }
+        
+        function checkOperation(){
+               var c = $("#correction");
+               var firstCheck = checkNum("left_val", "lv");
+               var secondCheck = checkNum("right_val", "rv");
+               var thirdCheck = checkNum("result", "re");
+               if(firstCheck && secondCheck && thirdCheck){
+                   var i = $("#left_val").val();
+                   var d = $("#right_val").val();
+                   var r = $("#result").val();
+                   var s = $("#operationSelect").val();
+                   if ((s=="sum" && math_operation['+'](i, d, r)) || (s=="res" && math_operation['-'](i, d, r)) || (s=="mul" && math_operation['*'](i, d, r)) || (s=="div" && math_operation['/'](i, d, r))){
+                    c.attr("style", "color:green");
+                    c.html("Sí");
+                    return true;
+                   }
+               } else {
+                   c.html("");
+                   return false;
+               }
+                c.attr("style", "color:red");
+                c.html("No");
+                return false; 
+           }
+           
+        function oper(){
+               var s = $("#operationSelect").val();
+               var t = $("#correction").val();
+               if (s=="sum"){
+                   $("#op").html("Sum selected");
+               } else if (s=="res"){
+                   $("#op").html("Substract selected");
+               } else if (s=="mul"){
+                   $("#op").html("Dot selected");
+               } else {
+                   $("#op").html("Division selected");
+               }
+               return checkOperation();
+           }
+       
+       function resetInput(){
+            $("#left_val").val("");
+            $("#right_val").val("");
+            $("#result").val("");
+            checkOperation();
+        }
+        
+       $("#left_val").keyup(function() {checkOperation();});
+       $("#right_val").keyup(function() {checkOperation();});
+       $("#result").keyup(function() {checkOperation();});
+       $("#reset").click(function() {resetInput();});
+       $("#operationSelect").change(function() {oper();});
+         
+            
+        </script>
+        
+    </body>
+</html>
